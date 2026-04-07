@@ -21,7 +21,7 @@ class Environment:
         if place in self.places:
             return self.places_info[place]
         else:
-            return f"{place} is not a valid place to inspect."
+            return f"{place} is not a valid place to inspect. Valid places are: [{', '.join(self.places)}]."
 
     def execute_driver_tool(
         self,

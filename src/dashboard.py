@@ -18,7 +18,13 @@ def _collect_runs(run_dir: Path) -> list[tuple[Path, dict[str, Any]]]:
     rows: list[tuple[Path, dict[str, Any]]] = []
     if not run_dir.exists():
         return rows
-    for file_path in sorted(run_dir.glob("*.json"), reverse=True):
+    # Sort by file mtime so "latest" is independent of filename prefixes.
+    run_files = sorted(
+        run_dir.glob("*.json"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    for file_path in run_files:
         payload = _load_run(file_path)
         if payload is not None:
             rows.append((file_path, payload))

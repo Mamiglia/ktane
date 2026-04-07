@@ -129,13 +129,16 @@ class Manual:
         ast.fix_missing_locations(exec_tree)
 
         eval_code = None
-        if last_expr is not None:
-            eval_tree = ast.Expression(body=last_expr.value)
-            ast.fix_missing_locations(eval_tree)
-            eval_code = compile(eval_tree, "<python_interpreter>", "eval")
-            has_last_expression = True
+        try:
+            if last_expr is not None:
+                eval_tree = ast.Expression(body=last_expr.value)
+                ast.fix_missing_locations(eval_tree)
+                eval_code = compile(eval_tree, "<python_interpreter>", "eval")
+                has_last_expression = True
 
-        exec_code = compile(exec_tree, "<python_interpreter>", "exec")
+            exec_code = compile(exec_tree, "<python_interpreter>", "exec")
+        except Exception as exc:  # noqa: BLE001
+            return f"ERROR: python_interpreter: {exc}"
 
         try:
             with redirect_stdout(stream):

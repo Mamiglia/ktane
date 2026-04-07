@@ -21,6 +21,11 @@ from src.wires import DRIVER_ACTION_NAME as WIRES_DRIVER_ACTION_NAME
 from src.wires.environment import WiresEnvironment
 from src.wires.manual import WiresManual
 from src.wires.variables import WiresVariables
+from src.whofirst import DRIVER_ACTION_EXAMPLE_ARGS_JSON as WHOFIRST_DRIVER_ACTION_EXAMPLE_ARGS_JSON
+from src.whofirst import DRIVER_ACTION_NAME as WHOFIRST_DRIVER_ACTION_NAME
+from src.whofirst.environment import WhofirstEnvironment
+from src.whofirst.manual import WhofirstManual
+from src.whofirst.variables import WhofirstVariables
 
 from .types import PuzzleName
 
@@ -58,6 +63,11 @@ def build_keypad(seed: int | None) -> tuple[Environment, Manual]:
     return KeypadEnvironment(cfg), KeypadManual(cfg)
 
 
+def build_whofirst(seed: int | None) -> tuple[Environment, Manual]:
+    cfg = WhofirstVariables.random(seed=seed)
+    return WhofirstEnvironment(cfg), WhofirstManual(cfg)
+
+
 PUZZLE_SPECS: dict[PuzzleName, PuzzleSpec] = {
     "wires": PuzzleSpec(
         builder=build_wires,
@@ -73,6 +83,11 @@ PUZZLE_SPECS: dict[PuzzleName, PuzzleSpec] = {
         builder=build_keypad,
         driver_action_name=KEYPAD_DRIVER_ACTION_NAME,
         driver_action_example_args_json=KEYPAD_DRIVER_ACTION_EXAMPLE_ARGS_JSON,
+    ),
+    "whofirst": PuzzleSpec(
+        builder=build_whofirst,
+        driver_action_name=WHOFIRST_DRIVER_ACTION_NAME,
+        driver_action_example_args_json=WHOFIRST_DRIVER_ACTION_EXAMPLE_ARGS_JSON,
     ),
 }
 

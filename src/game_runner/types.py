@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 Role = Literal["driver", "expert"]
-PuzzleName = Literal["wires", "cannon", "keypad"]
+PuzzleName = Literal["wires", "cannon", "keypad", "whofirst"]
 
 DEFAULT_MAX_TURNS = 10
 DEFAULT_MAX_MESSAGES_PER_AGENT = 10

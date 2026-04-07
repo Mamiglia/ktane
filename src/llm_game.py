@@ -1,7 +1,8 @@
-from src.game_runner import DEFAULT_MAX_TURNS, PuzzleName, Role, RunResult, run_puzzle, save_result_json
+from src.game_runner import DEFAULT_MAX_MESSAGES_PER_AGENT, DEFAULT_MAX_TURNS, PuzzleName, Role, RunResult, run_puzzle, save_result_json
 from src.game_runner.cli import build_cli_parser, main
 
 __all__ = [
+    "DEFAULT_MAX_MESSAGES_PER_AGENT",
     "DEFAULT_MAX_TURNS",
     "PuzzleName",
     "Role",

@@ -7,11 +7,8 @@ from src.manual import Manual
 
 from .model_io import litellm_chat, normalize_tool_calls, safe_json_object
 from .prompts import driver_system_prompt, expert_system_prompt
-from .puzzles import build_puzzle
-from .types import PuzzleName, Role, RunResult
-
-
-MAX_MESSAGES_PER_AGENT = 10
+from .puzzles import build_puzzle, driver_action_prompt_fields
+from .types import DEFAULT_MAX_MESSAGES_PER_AGENT, PuzzleName, Role, RunResult
 
 
 def _extract_message_content(arguments: dict[str, Any]) -> str:
@@ -288,10 +285,10 @@ def run_puzzle(
     expert_message_count = 0
 
     for turn in range(1, max_turns + 1):
-        if active_role == "driver" and driver_message_count >= MAX_MESSAGES_PER_AGENT:
+        if active_role == "driver" and driver_message_count >= max_messages_per_agent:
             reason = "driver_message_limit_reached"
             break
-        if active_role == "expert" and expert_message_count >= MAX_MESSAGES_PER_AGENT:
+        if active_role == "expert" and expert_message_count >= max_messages_per_agent:
             reason = "expert_message_limit_reached"
             break
 

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from .orchestrator import run_puzzle
 from .puzzles import available_puzzles
 from .serialization import save_result_json
-from .types import DEFAULT_MAX_TURNS
+from .types import DEFAULT_MAX_MESSAGES_PER_AGENT, DEFAULT_MAX_TURNS
 
 def build_cli_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run asymmetric puzzle with LLM Driver/Expert")
@@ -18,6 +18,12 @@ def build_cli_parser() -> argparse.Namespace:
     parser.add_argument("--driver-model", type=str)
     parser.add_argument("--expert-model", type=str)
     parser.add_argument("--max-turns", type=int, default=DEFAULT_MAX_TURNS)
+    parser.add_argument(
+        "--max-messages-per-agent",
+        type=int,
+        default=DEFAULT_MAX_MESSAGES_PER_AGENT,
+        help="Maximum number of successful message handoffs each agent can make.",
+    )
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--print-transcript", action="store_true")
@@ -57,6 +63,7 @@ def main() -> None:
         driver_model=args.driver_model,
         expert_model=args.expert_model,
         max_turns=args.max_turns,
+        max_messages_per_agent=args.max_messages_per_agent,
         seed=args.seed,
         temperature=args.temperature,
     )
@@ -79,6 +86,7 @@ def main() -> None:
             seed=args.seed,
             temperature=args.temperature,
             max_turns=args.max_turns,
+            max_messages_per_agent=args.max_messages_per_agent,
             output_path=args.output_path,
         )
         print(f"Saved run JSON: {output}")

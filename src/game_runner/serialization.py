@@ -15,6 +15,7 @@ def save_result_json(
     seed: int | None,
     temperature: float,
     max_turns: int,
+    max_messages_per_agent: int,
     output_path: str | None = None,
 ) -> Path:
     """Persist a run result to JSON and return the written path."""
@@ -36,6 +37,7 @@ def save_result_json(
             "seed": seed,
             "temperature": temperature,
             "max_turns": max_turns,
+            "max_messages_per_agent": max_messages_per_agent,
         },
         "result": asdict(result),
     }

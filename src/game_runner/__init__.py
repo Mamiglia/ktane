@@ -1,9 +1,10 @@
 from .cli import main
 from .orchestrator import run_puzzle
 from .serialization import save_result_json
-from .types import DEFAULT_MAX_TURNS, PuzzleName, Role, RunResult
+from .types import DEFAULT_MAX_MESSAGES_PER_AGENT, DEFAULT_MAX_TURNS, PuzzleName, Role, RunResult
 
 __all__ = [
+    "DEFAULT_MAX_MESSAGES_PER_AGENT",
     "DEFAULT_MAX_TURNS",
     "PuzzleName",
     "Role",

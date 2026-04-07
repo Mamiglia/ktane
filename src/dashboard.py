@@ -205,18 +205,23 @@ def _render_chat_event(event: dict[str, Any]) -> None:
     actor = event["label"]
     bubble_class = "driver" if role == "driver" else "expert"
     event_class = "system" if event["agent"].endswith("_system") else bubble_class
+    if event["event_type"] == "tool-response":
+        event_class += " tool-response"
     meta = f"{actor} · {event['event_type']} · turn {event['turn']}"
     content = html.escape(str(event["content"]))
 
     tool_html = ""
-    if event["tool_calls"]:
-        tool_html += "<div class='chat-tool'><details><summary>Tool calls</summary><pre>"
-        tool_html += html.escape(json.dumps(event["tool_calls"], indent=2))
-        tool_html += "</pre></details></div>"
-    if event["tool_result"] is not None:
-        tool_html += "<div class='chat-tool'><details><summary>Tool result</summary><pre>"
-        tool_html += html.escape(str(event["tool_result"]))
-        tool_html += "</pre></details></div>"
+    if event["tool_calls"] or event["tool_result"] is not None:
+        tool_html += "<div class='chat-tools-container'>"
+        if event["tool_calls"]:
+            tool_html += "<div class='chat-tool'><details><summary>Tool calls</summary><pre>"
+            tool_html += html.escape(json.dumps(event["tool_calls"], indent=2))
+            tool_html += "</pre></details></div>"
+        if event["tool_result"] is not None:
+            tool_html += "<div class='chat-tool'><details><summary>Tool result</summary><pre>"
+            tool_html += html.escape(str(event["tool_result"]))
+            tool_html += "</pre></details></div>"
+        tool_html += "</div>"
 
     bubble_html = f"""
 <div class='chat-bubble {event_class}'>
@@ -381,15 +386,17 @@ def main() -> None:
     st.markdown(
         """
         <style>
-        .chat-bubble { max-width: 90%; margin-bottom: 12px; padding: 12px 16px; border-radius: 18px; line-height: 1.32; word-break: break-word; }
-        .chat-bubble.driver { margin-left: auto; background: rgba(10, 76, 150, 0.90); color: #eef6ff; border-bottom-right-radius: 4px; border: 1px solid rgba(255,255,255,0.12); }
-        .chat-bubble.expert { margin-right: auto; background: rgba(100, 40, 120, 0.92); color: #f8ecff; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.12); }
-        .chat-bubble.system { margin-right: auto; background: rgba(50, 52, 61, 0.92); color: #f1f1f3; border-radius: 18px; border: 1px solid rgba(255,255,255,0.12); }
-        .chat-meta { font-size: 0.80rem; margin-bottom: 6px; color: rgba(240,240,240,0.72); }
+        .chat-bubble { max-width: 90%; margin-bottom: 12px; padding: 12px 16px; border-radius: 18px; line-height: 1.32; white-space: pre-wrap; word-break: break-word; font-size: 0.95rem; }
+        .chat-bubble.driver { margin-left: auto; background: rgba(25, 95, 175, 0.2); color: #eef6ff; border-bottom-right-radius: 4px; border: 1px solid rgba(135, 185, 255, 0.15); box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .chat-bubble.expert { margin-right: auto; background: rgba(130, 50, 150, 0.2); color: #f8ecff; border-bottom-left-radius: 4px; border: 1px solid rgba(215, 155, 255, 0.15); box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .chat-bubble.system { margin-right: auto; border-bottom-left-radius: 4px; background: rgba(80, 85, 95, 0.2); color: #f1f1f3; border-radius: 18px; border: 1px solid rgba(200, 205, 215, 0.15); box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .chat-bubble.tool-response { background: rgba(120, 120, 120, 0.1); border: 1px dashed rgba(255, 255, 255, 0.15); box-shadow: none; color: #b0b0b0; }
+        .chat-meta { font-size: 0.80rem; margin-bottom: 6px; color: rgba(240,240,240,0.5); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         .chat-content { margin: 0; padding: 0; }
-        .chat-tool { margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); color: inherit; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.9rem; }
-        .chat-tool summary { cursor: pointer; font-weight: 600; margin-bottom: 6px; }
-        .chat-tool pre { margin: 0; white-space: pre-wrap; }
+        .chat-tools-container { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
+        .chat-tool { flex: 1; min-width: 0; padding: 8px; background: rgba(0, 0, 0, 0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); color: #c0c0c0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.8rem; }
+        .chat-tool summary { cursor: pointer; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; color: #d0d0d0; outline: none; user-select: none; }
+        .chat-tool pre { margin: 0; white-space: pre-wrap; overflow-x: auto; max-height: 250px; overflow-y: auto; font-size: 0.75rem; text-overflow: ellipsis; padding-top: 6px; }
         .chat-tool details { color: inherit; }
         </style>
         """,

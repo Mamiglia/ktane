@@ -270,11 +270,13 @@ def run_puzzle(
     max_turns: int,
     seed: int | None,
     temperature: float,
+    max_messages_per_agent: int = DEFAULT_MAX_MESSAGES_PER_AGENT,
 ) -> RunResult:
     env, manual = build_puzzle(puzzle, seed)
 
-    driver_prompt = driver_system_prompt(puzzle)
-    expert_prompt = expert_system_prompt(puzzle, manual.expert_tool_instructions())
+    action_name, action_args = driver_action_prompt_fields(puzzle)
+    driver_prompt = driver_system_prompt(action_name, action_args)
+    expert_prompt = expert_system_prompt(manual.expert_tool_instructions())
     driver_messages, expert_messages = _init_messages(env, manual, driver_prompt, expert_prompt)
 
     transcript: list[dict[str, Any]] = []

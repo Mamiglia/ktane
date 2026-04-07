@@ -1,11 +1,6 @@
 from __future__ import annotations
 
-from .types import PuzzleName
-
-
-def driver_system_prompt(puzzle: PuzzleName) -> str:
-    action_name = "cut_wire" if puzzle == "wires" else "set_angle_and_shoot"
-    action_args = '{"position": 2}' if puzzle == "wires" else '{"angle": 28.4}'
+def driver_system_prompt(action_name: str, action_args: str) -> str:
     return (
         "You are the Driver role in an asymmetric puzzle. "
         "You can inspect the world and execute actions, but you do not know puzzle rules. "

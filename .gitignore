@@ -1,0 +1,13 @@
+.github/
+.venv/
+runs/
+
+
+*.json
+*.pdf
+
+__pycache__
+*.pyc
+*.pyo
+
+.env

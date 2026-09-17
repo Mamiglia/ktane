@@ -69,11 +69,18 @@ def litellm_chat(
     messages: list[dict[str, str]],
     temperature: float,
 ) -> str:
+    kwargs = {}
+    if model.startswith("openrouter/"):
+        kwargs["api_base"] = "https://openrouter.ai/api/v1"
+        kwargs["api_key"] = os.getenv("OPENROUTER_API_KEY")
+    elif model.startswith("openai/"):
+        kwargs["api_base"] = os.getenv("OPENAI_API_BASE")
+        kwargs["api_key"] = os.getenv("OPENAI_API_KEY", "dummy-key")
+
     response: Any = completion(
         model=model,
         messages=messages,
         temperature=temperature,
-        api_base="https://openrouter.ai/api/v1",
-        api_key=os.getenv("OPENROUTER_API_KEY"),
+        **kwargs
     )
     return response.choices[0].message.content or ""
